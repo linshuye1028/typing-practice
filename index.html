@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f6f5f0" />
+  <title>字里有风 — 打字练习</title>
+  <style>
+    :root { color-scheme: light; --ink:#20312d; --muted:#78827b; --paper:#f6f5f0; --card:#fffefa; --line:#e7e8df; --green:#2f715c; --mint:#e3eee7; --orange:#e99562; --shadow:0 18px 50px rgba(37,57,46,.07); }
+    * { box-sizing:border-box }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; min-height:100vh; }
+    .shell { max-width:1120px; margin:0 auto; padding:32px 28px 46px }
+    header { display:flex; align-items:center; justify-content:space-between; margin-bottom:54px }
+    .brand { display:flex; align-items:center; gap:11px; font-size:15px; font-weight:750; letter-spacing:.02em }
+    .brand-mark { width:34px;height:34px;border-radius:12px;background:var(--green);color:#fff;display:grid;place-items:center;font-family:Georgia,serif;font-size:20px }
+    .top-note { color:var(--muted);font-size:13px }
+    .hero { max-width:750px; margin:0 auto 32px; text-align:center }
+    .eyebrow { color:var(--green);font-size:12px;font-weight:750;letter-spacing:.16em;text-transform:uppercase }
+    h1 { margin:13px 0 10px; font-family:Georgia,"Songti SC","Noto Serif CJK SC",serif; font-size:clamp(36px,6vw,58px);font-weight:500;letter-spacing:.035em }
+    .subtitle { margin:0;color:var(--muted);font-size:15px;line-height:1.8 }
+    .practice { background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden }
+    .toolbar { display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid var(--line);gap:18px }
+    .level-tabs { display:flex;gap:7px;padding:4px;background:#f2f3ee;border-radius:12px }
+    .level { border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;transition:.2s }
+    .level.active { background:white;color:var(--ink);box-shadow:0 2px 7px #24382d12;font-weight:650 }
+    .time-select { border:1px solid var(--line);background:#fffefa;color:var(--ink);padding:10px 13px;border-radius:10px;font:inherit;font-size:13px;outline:none }
+    .work-area { padding:30px 34px 26px }
+    .passage-label { display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;margin-bottom:15px }
+    .passage { font-size:clamp(19px,2.4vw,24px);line-height:2.05;letter-spacing:.04em;min-height:148px;color:#a7ada7;user-select:none }
+    .char { position:relative;transition:color .1s }
+    .char.done { color:#a2aba3 }
+    .char.current { color:var(--ink) }
+    .char.current::after { content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;border-radius:3px;background:var(--orange);animation:blink 1s step-end infinite }
+    .char.wrong { color:#d35f4d;background:#fbe9e4;border-radius:4px }
+    @keyframes blink { 50% { opacity:0 } }
+    .input-wrap { margin-top:25px;position:relative }
+    textarea { display:block;width:100%;height:100px;resize:vertical;border:1px solid var(--line);border-radius:14px;background:#fbfbf7;padding:17px 18px;color:var(--ink);font:15px/1.8 inherit;font-family:inherit;font-size:15px;line-height:1.8;outline:none;transition:.2s }
+    textarea:focus { border-color:#9ab9a7;box-shadow:0 0 0 4px #e3eee780 }
+    textarea:disabled { opacity:.72 }
+    .input-hint { position:absolute;bottom:12px;right:15px;color:#a0a69f;font-size:11px;pointer-events:none }
+    .stats { display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:#fcfcf8 }
+    .stat { padding:19px 25px;border-right:1px solid var(--line) }
+    .stat:last-child { border:0 }
+    .stat-name { color:var(--muted);font-size:11px;letter-spacing:.06em }
+    .stat-value { margin-top:7px;font-size:25px;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.03em }
+    .stat-unit { margin-left:4px;color:var(--muted);font-size:12px;font-weight:450;letter-spacing:0 }
+    .below { display:flex;justify-content:space-between;align-items:center;margin-top:22px;color:var(--muted);font-size:12px }
+    .reset { border:0;background:transparent;color:var(--green);font:inherit;font-size:13px;font-weight:650;cursor:pointer;padding:9px 12px;border-radius:9px }
+    .reset:hover { background:var(--mint) }
+    .result { display:none;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;background:#edf4ee;border-top:1px solid #dce9df;color:var(--green);font-size:14px }
+    .result.show { display:flex }
+    .tip { max-width:650px;margin:34px auto 0;display:flex;gap:13px;align-items:flex-start;color:var(--muted);font-size:13px;line-height:1.8 }
+    .tip-icon { flex:0 0 25px;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#f0e8da;color:#a87442;font-weight:700 }
+    footer { text-align:center;margin-top:48px;color:#a3a9a1;font-size:11px;letter-spacing:.08em }
+    @media(max-width:650px){.shell{padding:22px 15px 32px}header{margin-bottom:40px}.top-note{display:none}.toolbar{padding:14px;align-items:flex-start;flex-direction:column}.work-area{padding:24px 18px 20px}.passage{min-height:175px}.stat{padding:15px 12px}.stat-value{font-size:21px}.stat-name{font-size:10px}.below{align-items:flex-start;line-height:1.7}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark">字</span><span>字里有风</span></div>
+      <div class="top-note">慢一点，准一点，然后自然会快起来。</div>
+    </header>
+    <section class="hero">
+      <div class="eyebrow">A little practice, every day</div>
+      <h1>让手指，跟上想法。</h1>
+      <p class="subtitle">一段短短的文字，一次专注的练习。<br/>不必赶时间，先让每个字都落在正确的位置。</p>
+    </section>
+    <section class="practice" aria-label="打字练习">
+      <div class="toolbar">
+        <div class="level-tabs" role="group" aria-label="练习难度">
+          <button class="level active" data-level="easy">轻松</button><button class="level" data-level="medium">日常</button><button class="level" data-level="hard">挑战</button>
+        </div>
+        <select class="time-select" id="duration" aria-label="练习时长"><option value="60">练习 1 分钟</option><option value="120">练习 2 分钟</option></select>
+      </div>
+      <div class="work-area">
+        <div class="passage-label"><span>跟着文字输入</span><span id="progress">准备好了吗？</span></div>
+        <div class="passage" id="passage" aria-live="polite"></div>
+        <div class="input-wrap">
+          <textarea id="typing" placeholder="点击这里开始，使用你习惯的中文输入法……" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+          <span class="input-hint">中文输入 · 无需看键盘</span>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-name">剩余时间</div><div class="stat-value" id="clock">01:00</div></div>
+        <div class="stat"><div class="stat-name">正确速度</div><div class="stat-value"><span id="speed">0</span><span class="stat-unit">字 / 分</span></div></div>
+        <div class="stat"><div class="stat-name">准确率</div><div class="stat-value"><span id="accuracy">100</span><span class="stat-unit">%</span></div></div>
+        <div class="stat"><div class="stat-name">完成进度</div><div class="stat-value"><span id="completion">0</span><span class="stat-unit">%</span></div></div>
+      </div>
+      <div class="result" id="result"><span id="resultText"></span><strong>漂亮，再来一轮？</strong></div>
+    </section>
+    <div class="below"><span>按自己的节奏练习，准确率比一时的速度更重要。</span><button class="reset" id="reset">↻　重新开始</button></div>
+    <aside class="tip"><span class="tip-icon">i</span><span><strong>小提示</strong>　用平时的中文输入法打出目标文字，候选词确认后会自动计入。计时从第一个字开始；按 <kbd>Esc</kbd> 可以清空本轮。</span></aside>
+    <footer>TAKE A BREATH · FIND YOUR RHYTHM</footer>
+  </main>
+  <script>
+    const passages = {
+      easy: [
+        "清晨的阳光落在窗台上，桌边的绿叶轻轻摇晃。泡一杯温热的茶，打开窗，让新的一天慢慢开始。",
+        "周末不必安排得太满。沿着熟悉的小路走一走，买几朵喜欢的花，回家做一顿简单的晚餐。",
+        "风从河面吹来，带着一点凉意。远处有人骑车经过，树影落在路上，时间好像也走得慢了一些。"
+      ],
+      medium: [
+        "我们总以为效率来自更快的动作，其实清楚的目标和稳定的节奏，往往能让事情做得更顺。先专注眼前这一件，再决定下一步。",
+        "一座城市的温度，藏在许多细小的瞬间里：早班车上的让座，街角店主的一句问候，还有雨天递来的一把伞。",
+        "学会一项新技能不一定要从宏大的计划开始。每天留出一小段时间，认真练习，变化会在不知不觉中积累起来。"
+      ],
+      hard: [
+        "真正可靠的进步，通常不是突然发生的。它更像一条缓慢向前的河流：经过弯道，也会遇到石头，却始终带着方向。",
+        "当信息越来越多，判断什么值得关注就成了一种能力。给重要的事情留出完整时间，也给自己留一点安静思考的空间。",
+        "写作让模糊的想法变得清晰，练习则让清晰的动作变得自然。重复并不意味着停滞，只要每一次都比上一次更准确。"
+      ]
+    };
+    const $ = id => document.getElementById(id);
+    const input = $('typing'); let level = 'easy', target = '', startedAt = 0, timer = null, remaining = 60, finished = false, composing = false;
+    function choosePassage(){ const list=passages[level]; target=list[Math.floor(Math.random()*list.length)]; render(); }
+    function render(){
+      const chars=[...target], typed=[...input.value];
+      $('passage').innerHTML=chars.map((ch,i)=>{let cls='char';if(i<typed.length)cls+=typed[i]===ch?' done':' wrong';else if(i===typed.length)cls+=' current';return `<span class="${cls}">${ch===' '?'&nbsp;':ch}</span>`}).join('');
+      const correct=typed.reduce((n,ch,i)=>n+(ch===chars[i]?1:0),0), elapsed=startedAt?Math.max(1,(Date.now()-startedAt)/1000):0;
+      const acc=typed.length?Math.round(correct/typed.length*100):100;
+      $('speed').textContent=startedAt?Math.round(correct*60/elapsed):0;
+      $('accuracy').textContent=acc; $('completion').textContent=Math.min(100,Math.round(typed.length/chars.length*100));
+      $('progress').textContent=`${Math.min(typed.length,chars.length)} / ${chars.length} 字`;
+      if(typed.length===chars.length && typed.every((ch,i)=>ch===chars[i])) finish();
+    }
+    function displayTime(){const m=String(Math.floor(remaining/60)).padStart(2,'0'),s=String(remaining%60).padStart(2,'0');$('clock').textContent=`${m}:${s}`}
+    function start(){if(startedAt||finished)return;startedAt=Date.now();timer=setInterval(()=>{remaining--;displayTime();if(remaining<=0)finish()},1000)}
+    function finish(){if(finished)return;finished=true;clearInterval(timer);input.disabled=true;const acc=$('accuracy').textContent,spd=$('speed').textContent;$('resultText').textContent=`本轮完成：${spd} 字/分钟，准确率 ${acc}%。`; $('result').classList.add('show');$('progress').textContent='本轮完成';}
+    function reset(){clearInterval(timer);timer=null;startedAt=0;finished=false;composing=false;remaining=Number($('duration').value);input.disabled=false;input.value='';$('result').classList.remove('show');displayTime();choosePassage();$('speed').textContent='0';$('accuracy').textContent='100';$('completion').textContent='0';$('progress').textContent='准备好了吗？';input.focus()}
+    input.addEventListener('compositionstart',()=>{composing=true});
+    input.addEventListener('compositionend',()=>{composing=false;if(input.value&&!startedAt)start();render()});
+    input.addEventListener('input',()=>{if(composing)return;if(input.value&&!startedAt)start();render()});
+    input.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();reset()}});
+    document.querySelectorAll('.level').forEach(btn=>btn.addEventListener('click',()=>{document.querySelector('.level.active').classList.remove('active');btn.classList.add('active');level=btn.dataset.level;reset()}));
+    $('duration').addEventListener('change',reset);$('reset').addEventListener('click',reset);choosePassage();displayTime();
+  </script>
+</body>
+</html>
